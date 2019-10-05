@@ -2,8 +2,9 @@ import pymunk, pygame
 from utils import *
 
 class Bird:
+    collision_type=1
     def __init__(self, space):
-        self.bird= self.new_bird(space)     #creates new bird and add to space into space
+        self.bird= self.new_bird(space)     #creates new bird and add to space
         self.is_avail= True                 #used to track if a bird is on sling
         self.b_m=10                         #mass and radius of bird
         self.b_r= 10
@@ -13,11 +14,11 @@ class Bird:
         Creates a new bird and add it to space, returns its shape
         '''
         self.body= pymunk.Body(body_type= pymunk.Body.KINEMATIC)
-        self.body.position= 200, 200
+        self.body.position= to_pygame(*sling_init)
         self.shape= pymunk.Circle(self.body, b_r)
         self.shape.elasticity= .95
         self.shape.friction= .8
-        self.shape.collision_type=0
+        self.shape.collision_type=Bird.collision_type
         space.add(self.body, self.shape)
         return self.shape
 

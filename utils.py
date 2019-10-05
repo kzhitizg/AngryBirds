@@ -19,9 +19,9 @@ def dist(p, r):
 
 #sling constants
 sling_w=5
-sling_init=(200, 400)
-sling_left=(200+sling_w, 400)
-sling_right=(200-sling_w, 400)
+sling_init=(200, 500)
+sling_left=(200+sling_w, 500)
+sling_right=(200-sling_w, 500)
 sling_mx= 80
 
 #stretch the sling with mouse
@@ -42,3 +42,6 @@ def power(mouse):
         return d
     else:
         return sling_mx
+
+#collision limits
+birdpig_limit=60

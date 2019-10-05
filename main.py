@@ -6,6 +6,7 @@ import pymunk.pygame_util
 import math
 from birds import Bird
 from utils import *
+from characters import *
 
 class Main():
     def __init__(self):
@@ -18,6 +19,7 @@ class Main():
         #pymunk init
         self.space= pymunk.Space()
         self.space.gravity= (0,-900)         #gravity
+        self.space.damping= 0.8
 
         '''
         Create a new bird, it is sl_bird
@@ -32,19 +34,40 @@ class Main():
         seg= pymunk.Segment(self.space.static_body, (0, 10), (self.w, 10), 5)
         #lower elasticity
         seg.elasticity= 0.6
-        seg.collision_type=1
+        seg.collision_type=0
         seg.friction= 0.5
         self.space.add(seg)
         # draw_options = pymunk.pygame_util.DrawOptions(self.gameDisplay)
+
+        '''
+        Create a pig, at say, 600, 50, just to test
+        '''
+        self.pigs= [Pig(1.5, self.space, (600, 50))]
         
         #added as trial function, will be used to define the behaviour of collisions
         def func(arbiter, space, data):
+            bird, pig= (arbiter.shapes)
+            limit= birdpig_limit
             print(arbiter.total_impulse.length)
+            if arbiter.total_impulse.length > limit*100:
+                self.space.remove(pig.body, pig)
+                self.pigs.remove(pig)
+                print("Pig Removed")
+            else:
+                pig.health-=arbiter.total_impulse.length/limit
+                print(pig.health)
+            # print(arbiter.total_impulse.length)
+            return True
+        
+        def f2(arbiter, space, data):
+            print(arbiter)
             return True
 
-        col= self.space.add_collision_handler(0, 1)
+        # print(self.pigs[0].collision_type, Pig.collision_type)
+        col= self.space.add_collision_handler(1,2)
         col.post_solve= func
-        #end of trail
+        col.begin= f2
+        # end of trial
 
         self.mb_down=False     #to hold the bird
 
@@ -116,6 +139,16 @@ class Main():
                     self.birds.remove(bird)
                     # print("Bird Removed")
             
+            for pig in self.pigs:
+                #show pig
+                if pig:
+                    pig.show(self.gameDisplay)
+                #pig cleanup
+                if pig.body.position.y<0 or pig.body.position.x<0 or pig.body.position.x>self.w:
+                    self.space.remove(pig.body, pig)
+                    self.pigs.remove(pig)
+                    print("Pig Removed")
+
             pygame.draw.line(self.gameDisplay, (225, 180, 255), to_pygame(*seg.a), to_pygame(*seg.b), 5)
             # self.space.debug_draw(draw_options)
 
