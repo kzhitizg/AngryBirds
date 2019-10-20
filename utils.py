@@ -44,6 +44,7 @@ def power(mouse):
         return sling_mx
 #collision limits
 birdpig_limit=100
+birdplank_limit= 8000000
 
 #the collision handler for bird and pig
 def bird_pig_col(arbiter, space, data):
@@ -53,9 +54,25 @@ def bird_pig_col(arbiter, space, data):
         space.remove(pig.body, pig)
         data["pigs"].remove(pig)
         print("Pig Removed")
+
         return False
     else:
         pig.health-=bird.body.velocity.get_length()/(limit/2)
         # print(pig.health)
         return True
 
+#collision handler for bird and plank
+def bird_plank_col(arbiter, space, data):
+    bird, plank= (arbiter.shapes)
+    limit= birdplank_limit
+    impulse= bird.body.kinetic_energy + plank.body.kinetic_energy
+    print(impulse)
+    plank.health-= (impulse/limit)*plank.max_health
+    if plank.health<=0:
+        space.remove(plank.body, plank)
+        data["objs"].remove(plank)
+        print("Plank destroyed")
+        return False
+    else:
+        print(plank.health)
+        return True

@@ -18,7 +18,7 @@ class Main():
         
         #pymunk init
         self.space= pymunk.Space()
-        self.space.gravity= (0, -900)         #gravity
+        self.space.gravity= (0, -1000)         #gravity
         self.space.damping= 0.8
 
         '''
@@ -40,18 +40,21 @@ class Main():
 
         draw_options = pymunk.pygame_util.DrawOptions(self.gameDisplay)
         
-        plank= Plank(100, 20, (800,100), 50000, self.space)
+        self.objects= [Plank(100, 20, (800,100), 50000, self.space)]
         '''
         Create a pig, at say, 600, 50, just to test
         '''
         self.pigs= [Pig(1.5, self.space, (600, 50))]
         
         #the collision handling for bird and pig
-        bpcol= self.space.add_collision_handler(1,2)
-        bpcol.data["pigs"]= self.pigs
-        bpcol.pre_solve= bird_pig_col
+        bpgcol= self.space.add_collision_handler(1,2)
+        bpgcol.data["pigs"]= self.pigs
+        bpgcol.pre_solve= bird_pig_col
 
-
+        #the collision handling for bird and plank
+        bpl_col= self.space.add_collision_handler(1, 3)
+        bpl_col.data["objs"]= self.objects
+        bpl_col.pre_solve= bird_plank_col
 
         self.mb_down=False     #to hold the bird
 
@@ -85,7 +88,7 @@ class Main():
                     self.sl_bird.is_avail=False    #bird not available to shoot
                     self.mb_down=False
                     p=power(event.pos)             #calculate impulse to be applied
-                    f=120                          #factor
+                    f=130                          #factor
                     impulse= pymunk.Vec2d(p*f, 0)  #net impluse to apply
                     try:
                         impulse.rotate(math.atan2((event.pos[1]-sling_init[1]),-(event.pos[0]-sling_init[0])))
@@ -135,7 +138,8 @@ class Main():
 
             pygame.draw.line(self.gameDisplay, (225, 180, 255), to_pygame(*seg.a), to_pygame(*seg.b), 5)
             # self.space.debug_draw(draw_options)
-            plank.show(self.gameDisplay)
+            for obj in self.objects:
+                obj.show(self.gameDisplay)
             #delta t= 1/80
             self.space.step(1/80.0)
             pygame.display.flip()

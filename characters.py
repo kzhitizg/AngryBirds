@@ -48,10 +48,12 @@ class Plank(pymunk.Poly):
         self.r= 5
         self.pbody= pymunk.Body(self.pmass, pymunk.moment_for_poly(self.pmass, self.points, radius=5))
         super(Plank, self).__init__(self.pbody, self.points, radius=self.r)
+        self._set_collision_type(3)
         self.pbody.position= self.pos
         self.elasticity= .85
         self.friction= 0.9
         self.health=self.h*self.w/10
+        self.max_health= self.health
         self.sp= space
         space.add(self.pbody, self)
 
