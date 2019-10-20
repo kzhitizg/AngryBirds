@@ -40,7 +40,7 @@ class Main():
 
         draw_options = pymunk.pygame_util.DrawOptions(self.gameDisplay)
         
-        plank= Plank(100, 30, (800,100), 20, self.space)
+        plank= Plank(100, 20, (800,100), 50000, self.space)
         '''
         Create a pig, at say, 600, 50, just to test
         '''
@@ -112,11 +112,11 @@ class Main():
             if self.mb_down:
                 self.sl_bird.sling_bird(pos, self.gameDisplay)
             else:
-                self.sl_bird.show_bird(self.gameDisplay)
+                self.sl_bird.show(self.gameDisplay)
             
             #show other birds
             for bird in self.birds:
-                bird.show_bird(self.gameDisplay)
+                bird.show(self.gameDisplay)
                 #if bird gous out of screen
                 if bird.body.position.y<0 or bird.body.position.x<0 or bird.body.position.x>self.w:
                     self.space.remove(bird.shape, bird.body)

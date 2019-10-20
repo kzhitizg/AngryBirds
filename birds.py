@@ -33,7 +33,7 @@ class Bird:
         self.body.apply_impulse_at_local_point(impulse)
         # print(self.body.velocity)
     
-    def show_bird(self, screen):
+    def show(self, screen):
         '''Util fun to show bird on screen'''
         pos= to_pygame(*self.body.position)
         # print(pos)
@@ -46,5 +46,5 @@ class Bird:
         # print(pos)
         pygame.draw.line(screen, (0,0,0), pos, sling_right)
         # pygame.draw.circle(screen, (0, 0, 225), pos, int(self.b_r))
-        self.show_bird(screen)
+        self.show(screen)
         pygame.draw.line(screen, (0,0,0), pos, sling_left)
