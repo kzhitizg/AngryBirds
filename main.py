@@ -18,7 +18,7 @@ class Main():
         
         #pymunk init
         self.space= pymunk.Space()
-        self.space.gravity= (0,-900)         #gravity
+        self.space.gravity= (0, -900)         #gravity
         self.space.damping= 0.8
 
         '''
@@ -37,37 +37,21 @@ class Main():
         seg.collision_type=0
         seg.friction= 0.5
         self.space.add(seg)
-        # draw_options = pymunk.pygame_util.DrawOptions(self.gameDisplay)
 
+        draw_options = pymunk.pygame_util.DrawOptions(self.gameDisplay)
+        
+        plank= Plank(100, 30, (800,100), 20, self.space)
         '''
         Create a pig, at say, 600, 50, just to test
         '''
         self.pigs= [Pig(1.5, self.space, (600, 50))]
         
-        #added as trial function, will be used to define the behaviour of collisions
-        def func(arbiter, space, data):
-            bird, pig= (arbiter.shapes)
-            limit= birdpig_limit
-            print(arbiter.total_impulse.length)
-            if arbiter.total_impulse.length > limit*100:
-                self.space.remove(pig.body, pig)
-                self.pigs.remove(pig)
-                print("Pig Removed")
-            else:
-                pig.health-=arbiter.total_impulse.length/limit
-                print(pig.health)
-            # print(arbiter.total_impulse.length)
-            return True
-        
-        def f2(arbiter, space, data):
-            print(arbiter)
-            return True
+        #the collision handling for bird and pig
+        bpcol= self.space.add_collision_handler(1,2)
+        bpcol.data["pigs"]= self.pigs
+        bpcol.pre_solve= bird_pig_col
 
-        # print(self.pigs[0].collision_type, Pig.collision_type)
-        col= self.space.add_collision_handler(1,2)
-        col.post_solve= func
-        col.begin= f2
-        # end of trial
+
 
         self.mb_down=False     #to hold the bird
 
@@ -151,7 +135,7 @@ class Main():
 
             pygame.draw.line(self.gameDisplay, (225, 180, 255), to_pygame(*seg.a), to_pygame(*seg.b), 5)
             # self.space.debug_draw(draw_options)
-
+            plank.show(self.gameDisplay)
             #delta t= 1/80
             self.space.step(1/80.0)
             pygame.display.flip()

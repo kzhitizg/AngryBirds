@@ -33,3 +33,30 @@ class Pig(pymunk.Circle):
         pos= to_pygame(*self.pbody.position)
         # print(pos)
         pygame.draw.circle(screen, (0, 225, 150), pos, int(self.pradius))
+
+class Plank(pymunk.Poly):
+    collision_type=3
+    def __init__(self, height, width, point, mass, space):
+        self.h= height
+        self.w= width
+        self.points=[(self.w//2, self.h//2),
+            (-self.w//2, self.h//2),
+            (-self.w//2, -self.h//2),
+            (self.w//2, -self.h//2)]
+        self.pmass= mass
+        self.pos= point
+        self.pbody= pymunk.Body(mass, pymunk.moment_for_poly(mass, self.points, radius=5))
+        super(Plank, self).__init__(self.pbody, self.points)
+        self.pbody.position= self.pos
+        self.elasticity= .95
+        self.friction= 1.0
+        self.health=self.h*self.w/10
+        self.sp= space
+        space.add(self.pbody, self)
+
+    def show(self, screen):
+        pts= []
+        vtx= self.get_vertices()
+        for pt in vtx:
+            pts.append(to_pygame(pt[0]+self.pbody.position[0], pt[1]+self.pbody.position[1]))
+        pygame.draw.polygon(screen, [0, 120, 120], pts)

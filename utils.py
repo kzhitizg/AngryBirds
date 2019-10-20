@@ -42,6 +42,20 @@ def power(mouse):
         return d
     else:
         return sling_mx
-
 #collision limits
-birdpig_limit=60
+birdpig_limit=100
+
+#the collision handler for bird and pig
+def bird_pig_col(arbiter, space, data):
+    bird, pig= (arbiter.shapes)
+    limit= birdpig_limit
+    if bird.body.velocity.get_length() > limit:
+        space.remove(pig.body, pig)
+        data["pigs"].remove(pig)
+        print("Pig Removed")
+        return False
+    else:
+        pig.health-=bird.body.velocity.get_length()/(limit/2)
+        # print(pig.health)
+        return True
+
