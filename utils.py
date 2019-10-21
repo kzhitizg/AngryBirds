@@ -1,3 +1,4 @@
+import math
 b_m=10
 b_r= 10
 
@@ -43,22 +44,21 @@ def power(mouse):
     else:
         return sling_mx
 #collision limits
-birdpig_limit=100
-birdplank_limit= 8000000
+birdpig_limit= 3000000
+birdplank_limit= 7000000
+pigplank_limit= birdplank_limit*10
 
 #the collision handler for bird and pig
 def bird_pig_col(arbiter, space, data):
     bird, pig= (arbiter.shapes)
     limit= birdpig_limit
-    if bird.body.velocity.get_length() > limit:
+    impulse= bird.body.kinetic_energy + pig.body.kinetic_energy
+    pig.health-= (impulse/limit)*pig.max_health
+    if pig.health<=0:
         space.remove(pig.body, pig)
         data["pigs"].remove(pig)
-        print("Pig Removed")
-
         return False
     else:
-        pig.health-=bird.body.velocity.get_length()/(limit/2)
-        # print(pig.health)
         return True
 
 #collision handler for bird and plank
@@ -66,13 +66,34 @@ def bird_plank_col(arbiter, space, data):
     bird, plank= (arbiter.shapes)
     limit= birdplank_limit
     impulse= bird.body.kinetic_energy + plank.body.kinetic_energy
-    print(impulse)
     plank.health-= (impulse/limit)*plank.max_health
     if plank.health<=0:
         space.remove(plank.body, plank)
         data["objs"].remove(plank)
-        print("Plank destroyed")
+        imp= bird.body.velocity*(bird.body.mass/2)
+        imp.rotate_degrees(180)
+        bird.body.apply_impulse_at_local_point(imp)
         return False
     else:
-        print(plank.health)
+        return True
+
+#pig_plank_col
+def pig_plank_col(arbiter, space, data):
+    pig, plank= arbiter.shapes
+    limit= pigplank_limit
+    impulse= pig.body.kinetic_energy + plank.body.kinetic_energy
+    if impulse< 300000:
+        return True
+    plank.health-= (impulse/limit)*plank.max_health
+    pig.health-= (impulse/limit)*pig.max_health
+    print(plank.health, pig.health)
+    if plank.health<=0 and plank in data["objs"]:
+        space.remove(plank.body, plank)
+        data["objs"].remove(plank)
+        return False
+    elif pig.health<=0 and pig in data["pigs"]:
+        space.remove(pig.body, pig)
+        data["pigs"].remove(pig)
+        return False
+    else:
         return True

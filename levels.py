@@ -10,7 +10,7 @@ class Level:
         self.w, self.h= W, H
 
         #The ground--------
-        self.ground= pymunk.Segment(self.space.static_body, (0, 10), (self.w, 10), 5)
+        self.ground= pymunk.Segment(self.space.static_body, (0, 10), (self.w, 10), 10)
         self.ground.elasticity= 0.6
         self.ground.collision_type=0
         self.ground.friction= 0.5
@@ -28,13 +28,19 @@ class Level:
         #------------------
 
         #The objects-------
-        self.objects= [Plank(100, 20, (800,100), 50000, self.space)]
+        self.objects= [Plank(100, 20, (750,80), 50000, self.space),
+                        Plank(100, 20, (670,80), 50000, self.space),
+                        Plank(20, 100, (710,140), 50000, self.space),
+                        Plank(100, 20, (750,200), 50000, self.space),
+                        Plank(100, 20, (670,200), 50000, self.space),
+                        Plank(20, 100, (710,260), 50000, self.space),
+                        ]
         #------------------
 
         #The pigs----------
         '''
         Create a pig, at say, 600, 50, just to test
         '''
-        self.pigs= [Pig(1.5, self.space, (600, 50))]
+        self.pigs= [Pig(1.5, self.space, (700, 170))]
         #------------------
 

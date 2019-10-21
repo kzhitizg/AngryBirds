@@ -1,8 +1,9 @@
 import pymunk
 from pygame.locals import *
 import pygame
-import pymunk.pygame_util
+import pymunk.pygame_util as pgutil
 
+import time
 import math
 from birds import Bird
 from utils import *
@@ -22,7 +23,8 @@ class Main():
         self.space.gravity= (0, -1000)         #gravity
         self.space.damping= 0.8
 
-        draw_options = pymunk.pygame_util.DrawOptions(self.gameDisplay)
+        draw_options = pgutil.DrawOptions(self.gameDisplay)
+        draw_options.flags= pymunk.SpaceDebugDrawOptions.DRAW_SHAPES
         
         #Create Level
         self.level= Level(self.space, self.gameDisplay)
@@ -36,6 +38,12 @@ class Main():
         bpl_col= self.space.add_collision_handler(1, 3)
         bpl_col.data["objs"]= self.level.objects
         bpl_col.pre_solve= bird_plank_col
+
+        #the collision handling for bird and plank
+        ppl_col= self.space.add_collision_handler(2, 3)
+        ppl_col.data["objs"]= self.level.objects
+        ppl_col.data["pigs"]= self.level.pigs
+        ppl_col.pre_solve= pig_plank_col
 
         self.mb_down=False     #to hold the bird
 
@@ -124,9 +132,13 @@ class Main():
             # for obj in self.objects:
             #     obj.show(self.gameDisplay)
             #delta t= 1/80
+            # for ele in self.level.objects:
+            #     pygame.draw.circle(self.gameDisplay, [0, 0, 0], to_pygame(*ele.pos), 5)
+
             self.space.step(1/80.0)
             pygame.display.flip()
             #60 fps
             self.clock.tick(60)
+            # time.sleep(1)
 
 Main()

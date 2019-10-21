@@ -16,6 +16,7 @@ class Pig(pymunk.Circle):
         self.elasticity= .95
         self.friction= 1.0
         self.health=size*100
+        self.max_health= self.health
         self.sp= space
         self.sp.add(self.pbody, self)
 
@@ -44,13 +45,14 @@ class Plank(pymunk.Poly):
             (-self.w//2, -self.h//2),
             (self.w//2, -self.h//2)]
         self.pmass= density/(self.h*self.w)
+        # self.pos= (point[0]-self.h//2, point[1]-self.w//2)
         self.pos= point
-        self.r= 5
+        self.r= 2
         self.pbody= pymunk.Body(self.pmass, pymunk.moment_for_poly(self.pmass, self.points, radius=5))
         super(Plank, self).__init__(self.pbody, self.points, radius=self.r)
         self._set_collision_type(3)
         self.pbody.position= self.pos
-        self.elasticity= .85
+        self.elasticity= .5
         self.friction= 0.9
         self.health=self.h*self.w/10
         self.max_health= self.health
