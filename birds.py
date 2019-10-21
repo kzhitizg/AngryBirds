@@ -46,5 +46,5 @@ class Bird:
         # print(pos)
         pygame.draw.line(screen, (0,0,0), pos, sling_right)
         # pygame.draw.circle(screen, (0, 0, 225), pos, int(self.b_r))
-        self.show(screen)
+        # self.show(screen)
         pygame.draw.line(screen, (0,0,0), pos, sling_left)
