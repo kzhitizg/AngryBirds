@@ -8,6 +8,7 @@ class Bird:
         self.is_avail= True                 #used to track if a bird is on sling
         self.b_m=10                         #mass and radius of bird
         self.b_r= 10
+        self.timer= 800
 
     def new_bird(self, space):
         '''
@@ -29,22 +30,18 @@ class Bird:
         self.bird.body.body_type= pymunk.Body.DYNAMIC
         self.bird.body.mass=self.b_m
         self.bird.body.moment= pymunk.moment_for_circle(self.b_m, 0, self.b_r)
-        # print(impulse)
         self.body.apply_impulse_at_local_point(impulse)
-        # print(self.body.velocity)
+
     
     def show(self, screen):
         '''Util fun to show bird on screen'''
         pos= to_pygame(*self.body.position)
-        # print(pos)
-        pygame.draw.circle(screen, (0, 0, 225), pos, int(self.b_r))
+        pygame.draw.circle(screen, (0, 0, 125), pos, int(self.b_r))
     
     def sling_bird(self, mouse, screen):
         '''defines the sling behaviour'''
         pos= list(map(int, stretch(mouse)))
         self.body.position= to_pygame(*pos)
-        # print(pos)
         pygame.draw.line(screen, (0,0,0), pos, sling_right)
-        # pygame.draw.circle(screen, (0, 0, 225), pos, int(self.b_r))
-        # self.show(screen)
+        self.show(screen)
         pygame.draw.line(screen, (0,0,0), pos, sling_left)

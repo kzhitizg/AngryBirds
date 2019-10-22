@@ -15,25 +15,25 @@ class Pig(pymunk.Circle):
         # self.pig= self.create(space, size, pos)
         self.elasticity= .95
         self.friction= 1.0
-        self.health=size*100
+        self.health= size*100
         self.max_health= self.health
         self.sp= space
         self.sp.add(self.pbody, self)
+        self.color= [0, 225, 150]
 
-    # def create(self, space, size, pos):
-    #     self.body.position= pos
-    #     self.shape= pymunk.Circle(self.body, self.radius)
-    #     self.shape.elasticity= .95
-    #     self.shape.friction= 1.0
-    #     self.shape.collision_type=Pig.collision_type
-    #     space.add(self.body, self.shape)
-    #     return self.shape
+    def update_color(self):
+        if self.health <= .75*self.max_health and self.health > self.max_health/2:
+            self.color[0]= 75
+        elif self.health <= self.max_health/2 and self.health > self.max_health/4:
+            self.color[0]= 150
+        elif self.health <= self.max_health/4:
+            self.color[0]= 225
 
     def show(self, screen):
         '''Util fun to show bird on screen'''
         pos= to_pygame(*self.pbody.position)
         # print(pos)
-        pygame.draw.circle(screen, (0, 225, 150), pos, int(self.pradius))
+        pygame.draw.circle(screen, self.color, pos, int(self.pradius))
 
 class Plank(pymunk.Poly):
     collision_type=3
@@ -54,10 +54,26 @@ class Plank(pymunk.Poly):
         self.pbody.position= self.pos
         self.elasticity= .5
         self.friction= 0.9
-        self.health=self.h*self.w/10
-        self.max_health= self.health
         self.sp= space
         space.add(self.pbody, self)
+        self.color1= [0, 220, 120]
+        self.color2= [0, 150, 120]
+        self.health= self.h*self.w/10
+        self.max_health= self.health
+
+    def update_color(self):
+        if self.health <= .75*self.max_health and self.health > self.max_health/2:
+            self.color1[0]= 75
+            self.color2[0]= 75
+        elif self.health <= self.max_health/2 and self.health > self.max_health/4:
+            self.color1[0]= 150
+            self.color2[0]= 150
+        elif self.health <= self.max_health/4:
+            self.color1[0]= 225
+            self.color2[0]= 225
+        else:
+            self.color1[0]= 0
+            self.color2[0]= 0
 
     def show(self, screen):
         pts= []
@@ -65,4 +81,5 @@ class Plank(pymunk.Poly):
         for pt in vtx:
             x, y= pt.rotated(self.body.angle) + self.body.position
             pts.append(to_pygame(x, y))
-        pygame.draw.polygon(screen, [0, 120, 120], pts)
+        pygame.draw.polygon(screen, self.color1, pts)
+        pygame.draw.polygon(screen, self.color2, pts, 4)

@@ -45,6 +45,16 @@ class Main():
         ppl_col.data["pigs"]= self.level.pigs
         ppl_col.pre_solve= pig_plank_col
 
+        #the collision handling for pig with ground
+        pg_col= self.space.add_collision_handler(0, 2)
+        pg_col.data["objs"]= self.level.pigs
+        pg_col.pre_solve= ground_col
+
+        #the collision handling for plank with ground
+        pg_col= self.space.add_collision_handler(0, 3)
+        pg_col.data["objs"]= self.level.objects
+        pg_col.pre_solve= ground_col
+
         self.mb_down=False     #to hold the bird
 
         self.counter=-1        #to add gap between bird shoot and new bird addition
@@ -88,8 +98,6 @@ class Main():
                     self.level.sl_bird.shoot_bird(impulse)
                     self.level.birds.append(self.level.sl_bird)
                     self.counter=10       #10 frames to next bird add
-                    # self.sl_bird=Bird(self.space)
-                # print(event)
             if self.counter==0:
                 #add new bird
                 self.counter-=1
@@ -104,14 +112,20 @@ class Main():
             #show first bird
             if self.mb_down:
                 self.level.sl_bird.sling_bird(pos, self.gameDisplay)
-            # else:
-                # self.level.sl_bird.show(self.gameDisplay)
+            else:
+                self.level.sl_bird.show(self.gameDisplay)
             
             #show other birds
             
             for bird in self.level.birds:
-                # bird.show(self.gameDisplay)
-                # if bird gous out of screen
+                bird.show(self.gameDisplay)
+                #bird self destruct
+                bird.timer-=1
+                if bird.timer<0:
+                    self.space.remove(bird.shape, bird.body)
+                    self.level.birds.remove(bird)
+                    continue
+                # if bird goes out of screen
                 if bird.body.position.y<0 or bird.body.position.x<0 or bird.body.position.x>self.w:
                     self.space.remove(bird.shape, bird.body)
                     self.level.birds.remove(bird)
@@ -119,22 +133,22 @@ class Main():
             
             for pig in self.level.pigs:
                 #show pig
-                # if pig:
-                #     pig.show(self.gameDisplay)
+                if pig:
+                    pig.show(self.gameDisplay)
                 #pig cleanup
                 if pig.body.position.y<0 or pig.body.position.x<0 or pig.body.position.x>self.w:
                     self.space.remove(pig.body, pig)
                     self.level.pigs.remove(pig)
                     print("Pig Removed")
 
-            pygame.draw.line(self.gameDisplay, (225, 180, 255), to_pygame(*self.level.ground.a), to_pygame(*self.level.ground.b), 10)
-            self.space.debug_draw(draw_options)
-            # for obj in self.objects:
-            #     obj.show(self.gameDisplay)
-            #delta t= 1/80
+            pygame.draw.line(self.gameDisplay, (225, 180, 255), to_pygame(*self.level.ground.a), to_pygame(*self.level.ground.b), 20)
+            # self.space.debug_draw(draw_options)
+            for obj in self.level.objects:
+                obj.show(self.gameDisplay)
             # for ele in self.level.objects:
             #     pygame.draw.circle(self.gameDisplay, [0, 0, 0], to_pygame(*ele.pos), 5)
 
+            # delta t= 1/80
             self.space.step(1/80.0)
             pygame.display.flip()
             #60 fps

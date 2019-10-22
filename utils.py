@@ -45,16 +45,18 @@ def power(mouse):
         return sling_mx
 #collision limits
 birdpig_limit= 3000000
-birdplank_limit= 7000000
+birdplank_limit= 5000000
 pigplank_limit= birdplank_limit*10
+ground_limit= pigplank_limit
 
 #the collision handler for bird and pig
 def bird_pig_col(arbiter, space, data):
     bird, pig= (arbiter.shapes)
     limit= birdpig_limit
     impulse= bird.body.kinetic_energy + pig.body.kinetic_energy
-    pig.health-= (impulse/limit)*pig.max_health
-    if pig.health<=0:
+    pig.health-= (impulse/limit)*125
+    pig.update_color()
+    if pig.health<=0 and pig in data["pigs"]:
         space.remove(pig.body, pig)
         data["pigs"].remove(pig)
         return False
@@ -66,11 +68,12 @@ def bird_plank_col(arbiter, space, data):
     bird, plank= (arbiter.shapes)
     limit= birdplank_limit
     impulse= bird.body.kinetic_energy + plank.body.kinetic_energy
-    plank.health-= (impulse/limit)*plank.max_health
-    if plank.health<=0:
+    plank.health-= (impulse/limit)*150
+    plank.update_color()
+    if plank.health<=0 and plank in data["objs"]:
         space.remove(plank.body, plank)
         data["objs"].remove(plank)
-        imp= bird.body.velocity*(bird.body.mass/2)
+        imp= bird.body.velocity*bird.body.mass/3
         imp.rotate_degrees(180)
         bird.body.apply_impulse_at_local_point(imp)
         return False
@@ -84,9 +87,11 @@ def pig_plank_col(arbiter, space, data):
     impulse= pig.body.kinetic_energy + plank.body.kinetic_energy
     if impulse< 300000:
         return True
-    plank.health-= (impulse/limit)*plank.max_health
-    pig.health-= (impulse/limit)*pig.max_health
-    print(plank.health, pig.health)
+    plank.health-= (impulse/limit)*150
+    pig.health-= (impulse/limit)*100
+    plank.update_color()
+    pig.update_color()
+    # print(plank.health, pig.health)
     if plank.health<=0 and plank in data["objs"]:
         space.remove(plank.body, plank)
         data["objs"].remove(plank)
@@ -94,6 +99,22 @@ def pig_plank_col(arbiter, space, data):
     elif pig.health<=0 and pig in data["pigs"]:
         space.remove(pig.body, pig)
         data["pigs"].remove(pig)
+        return False
+    else:
+        return True
+
+#ground collision of pig and plank
+def ground_col(arbiter, space, data):
+    obj= arbiter.shapes[1]
+    limit= ground_limit
+    impulse= obj.body.kinetic_energy
+    if impulse < 200000:
+        return True
+    obj.health= obj.health - (impulse/limit)*125
+    obj.update_color()
+    if obj.health<=0 and obj in data["objs"]:
+        space.remove(obj.body, obj)
+        data["objs"].remove(obj)
         return False
     else:
         return True
