@@ -21,7 +21,7 @@ class Main():
         #pymunk init
         self.space= pymunk.Space()
         self.space.gravity= (0, -1000)         #gravity
-        self.space.damping= 0.5
+        self.space.damping= 0.8
 
         draw_options = pgutil.DrawOptions(self.gameDisplay)
         draw_options.flags= pymunk.SpaceDebugDrawOptions.DRAW_SHAPES
@@ -67,8 +67,6 @@ class Main():
                 elif event.type== KEYDOWN and event.key== K_ESCAPE:
                     pygame.quit()
                     quit()
-                elif event.type == KEYDOWN and event.key == K_SPACE and type(self.level.birds[-1]) == ThreeBird and self.level.birds[-1].a_avail:
-                    self.level.birds[-1].split(self.level.birds)
                 elif event.type== 5 and event.button==1 and self.level.sl_bird.is_avail==True:
                     '''
                     Add the bird to click down event, drag with mouse
@@ -90,7 +88,7 @@ class Main():
                     self.level.sl_bird.is_avail=False    #bird not available to shoot
                     self.mb_down=False
                     p=power(event.pos)             #calculate impulse to be applied
-                    f= self.level.sl_bird.b_m*15          #factor
+                    f=130                          #factor
                     impulse= pymunk.Vec2d(p*f, 0)  #net impluse to apply
                     try:
                         impulse.rotate(math.atan2((event.pos[1]-sling_init[1]),-(event.pos[0]-sling_init[0])))
@@ -124,12 +122,12 @@ class Main():
                 #bird self destruct
                 bird.timer-=1
                 if bird.timer<0:
-                    self.space.remove(bird, bird.body)
+                    self.space.remove(bird.shape, bird.body)
                     self.level.birds.remove(bird)
                     continue
                 # if bird goes out of screen
                 if bird.body.position.y<0 or bird.body.position.x<0 or bird.body.position.x>self.w:
-                    self.space.remove(bird, bird.body)
+                    self.space.remove(bird.shape, bird.body)
                     self.level.birds.remove(bird)
                     # print("Bird Removed")
             
@@ -155,6 +153,6 @@ class Main():
             pygame.display.flip()
             #60 fps
             self.clock.tick(60)
-            # time.sleep(0.1)
+            # time.sleep(1)
 
 Main()
