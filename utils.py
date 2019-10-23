@@ -52,6 +52,8 @@ ground_limit= pigplank_limit
 #the collision handler for bird and pig
 def bird_pig_col(arbiter, space, data):
     bird, pig= (arbiter.shapes)
+    if bird.a_avail:
+        bird.a_avail= False
     limit= birdpig_limit
     impulse= bird.body.kinetic_energy + pig.body.kinetic_energy
     pig.health-= (impulse/limit)*125
@@ -66,6 +68,8 @@ def bird_pig_col(arbiter, space, data):
 #collision handler for bird and plank
 def bird_plank_col(arbiter, space, data):
     bird, plank= (arbiter.shapes)
+    if bird.a_avail:
+        bird.a_avail= False
     limit= birdplank_limit
     impulse= bird.body.kinetic_energy + plank.body.kinetic_energy
     plank.health-= (impulse/limit)*150
