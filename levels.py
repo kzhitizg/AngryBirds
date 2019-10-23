@@ -11,7 +11,7 @@ class Level:
 
         #The ground--------
         self.ground= pymunk.Segment(self.space.static_body, (0, 10), (self.w, 10), 10)
-        self.ground.elasticity= 0.6
+        self.ground.elasticity= 0.5
         self.ground.collision_type=0
         self.ground.friction= 0.5
         self.space.add(self.ground)
@@ -23,7 +23,7 @@ class Level:
         Create a new bird, it is sl_bird
         birds array stores the shooted birds
         '''
-        self.sl_bird= Bird(self.space)    #sling bird, bird on sling
+        self.sl_bird= ThreeBird(self.space)    #sling bird, bird on sling
         self.birds=[]
         #------------------
 
